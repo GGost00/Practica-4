@@ -4,6 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
+        FUNCIONES.cpp \
         main.cpp \
         routers.cpp
 
