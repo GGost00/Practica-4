@@ -9,6 +9,9 @@
 #include "routers.h"
 
 using namespace std;
+routers r;
+char ori;
+
 string leer(){
     string data;
     string texto;
@@ -52,13 +55,20 @@ string leer(){
     //cout << texto << endl;
     return texto;
 }
+void Actualizar(){
+
+}
 void AgregarRouter(){
-/*esta funcion tiene como objetivo agragar todos los routers que el usuario desee agregar al
+    /*esta funcion tiene como objetivo agragar todos los routers que el usuario desee agregar al
 archivo donde se tienen guardadas las rutas*/
     string router;
     ofstream Guardar;
     Guardar.open("../practica_4/rutas/rutas.txt",ios::app);
     while (router!="-1") {
+        cout<<"PORFAVOR INGRESELO DE LA FORMA "
+              "<NUEVO><VIEJO>-<COSTO> (CON UN ENTER O SALTO DE LINEA) "<<endl<<"Y VISEVERSA "
+              "<VIEJO><NUEVO>-<COSTO> (CON UN ENTER O SALTO DE LINEA) "
+              ";EJEMPLO <AZ-9> Y <ZA-9>."<<endl;
         cout<<"********************************************"<<endl;
         cout<<"*      INGRESE EL NUEVO ROUTER ASI         *"<<endl;
         cout<<"********************************************"<<endl;
@@ -70,9 +80,9 @@ archivo donde se tienen guardadas las rutas*/
         cout<<"********************************************"<<endl;
         cin>>router;
         if(router!="-1"){
-        router+=".";
-        Guardar<<router<<endl;
-        system("CLS");
+            router+=".";
+            Guardar<<router<<endl;
+            system("CLS");
         }
     }
 
@@ -80,7 +90,7 @@ archivo donde se tienen guardadas las rutas*/
 
 }
 void BorrarRouter(){
-/*esta función tiene el propósito de eliminar el Reuter elegido por el usuario,
+    /*esta función tiene el propósito de eliminar el Reuter elegido por el usuario,
 se hace siguiendo estos pasos
 1) extraer los enlaces y ubicarlos en un mapa
 2) buscar con ayuda de un iterador si el Reuter que dio el usuario está en el mapa
@@ -135,23 +145,23 @@ esta el Reuter que dio el usuario se elimina dicho componente del mapa
             enlaces[txtau]=num_double;
         }
 
-    posinicio=pos+1;
+        posinicio=pos+1;
 
-    for(unsigned int i=0;i<sacado.length();i++){
-        if(i>pos){
-            neu+=sacado.at(i);
+        for(unsigned int i=0;i<sacado.length();i++){
+            if(i>pos){
+                neu+=sacado.at(i);
+            }
+
         }
-
-    }
-    posaux2=neu.find_first_of('.');
-    pos +=posaux2+1;
-    neu="";
-    temp2="";
-    temp1="";
-    txtau="";
-    if(posaux2==-1){
-        break;
-    }
+        posaux2=neu.find_first_of('.');
+        pos +=posaux2+1;
+        neu="";
+        temp2="";
+        temp1="";
+        txtau="";
+        if(posaux2==-1){
+            break;
+        }
     }
     while (router!='1') {
         cout<<"********************************************"<<endl;
@@ -187,7 +197,197 @@ esta el Reuter que dio el usuario se elimina dicho componente del mapa
         }
     }
 }
-void Menu(){
+
+
+
+
+//void busquedaRutas(const map<string, short>& rts,const string inicio,const char fin,short costotl,routers _r){
+
+//    short lTamInicio=inicio.size();
+//    for(auto enl : rts){
+//        if(inicio[lTamInicio-1]==enl.first[0] && inicio[lTamInicio-2]!= enl.first[1]){
+//            cout<<inicio<<"-"<<enl.first<<"["<<enl.second<<"]"<<endl;
+//            size_t found = inicio.find(enl.first);
+//            if(found != std::string::npos){
+//                cout<<"cadena repetida"<<endl;
+//                return;
+//            }
+//            if(enl.first.back()==fin){
+//                if(costotl+enl.second< _r.getCostoMinimo()){
+//                    _r.setRuta(inicio+enl.first,costotl+enl.second );
+//                }
+//                return;
+//            }
+//            busquedaRutas(rts,string(inicio+enl.first),fin,costotl+enl.second,_r);
+//        }
+//    }
+
+//}
+void fu(char origen,char destino,map<string,short> enlaces,string ruta,short costo,routers r,int x){
+    int pos=ruta.size();
+    map<string,short>::iterator it1;
+    for (it1=enlaces.begin();it1!=enlaces.end();it1++){
+            if(it1->first[0]==origen){
+                if(it1->first[1]!=ori){
+                    ruta+=it1->first;
+                    costo+=it1->second;
+                    if(it1->first[1]==destino){
+                        if(r.getCostoMinimo()>costo){
+                            r.setRuta(ruta,costo);
+                            ruta="";
+                            costo=0;
+                            origen=ori;
+                            return;
+                        }
+                    }else{
+                        if(ruta[pos-1]==origen){
+
+                        }
+                        origen=it1->first[1];
+                        fu(origen, destino, enlaces,ruta,costo,r,x);
+
+
+                    }
+                }
+
+            }
+
+    }
+}
+void BusquedaRutas(int x){
+    char origen,destino;
+    string c,ruta;short costo;
+    routers r;
+    cout<<"********************************************"<<endl;
+    cout<<"*      INGRESE DE LA DIGUIENTE FORMA       *"<<endl;
+    cout<<"********************************************"<<endl;
+    cout<<"*                                          *"<<endl;
+    cout<<"*          <ROUTER 1><ROUTER 1>            *"<<endl;
+    cout<<"*                                          *"<<endl;
+    cout<<"********************************************"<<endl;
+    cout<<"*             O -1 PARA SALIR               *"<<endl;
+    cout<<"********************************************"<<endl;
+    cin>>c;
+    if (c!="-1"){
+        origen=c[0];destino=c[1];ori=c[0];
+        int x=0,pos,posinicio=0,posaux1=0,posaux2;
+        string temp1,temp2,txtau,neu;
+        map<string,short> enlaces;
+        string sacado=leer();
+        pos =sacado.find_first_of('.');
+        while(true){
+            for(int i=posinicio;i < pos;i++){
+                if(posinicio==0){
+                    for(unsigned int i=0;i<sacado.length();i++){
+                        if(i>pos){
+                            temp2+=sacado.at(i);
+                        }
+
+                    }sacado=temp2;
+                    temp2="";
+                    pos=0;
+                    break;
+                }
+                else if(sacado.at(i)!=' '){
+                    temp1+=sacado.at(i);
+                }
+            }
+            if (temp1!=""){
+                posaux1=temp1.find_first_of("-");
+                for(unsigned int i=0;i<temp1.length();i++){
+                    if(i>posaux1){
+                        temp2+=temp1.at(i);
+                    }else if(temp1.at(i)!='-'){
+                        txtau+=temp1.at(i);
+                    }
+                }
+                double num_double = std::stod(temp2);
+                enlaces[txtau]=num_double;
+            }
+
+            posinicio=pos+1;
+
+            for(unsigned int i=0;i<sacado.length();i++){
+                if(i>pos){
+                    neu+=sacado.at(i);
+                }
+
+            }
+            posaux2=neu.find_first_of('.');
+            pos +=posaux2+1;
+            neu="";
+            temp2="";
+            temp1="";
+            txtau="";
+            if(posaux2==-1){
+                break;
+            }
+
+        }
+        map<string,short>::iterator it1;
+        for (it1=enlaces.begin();it1!=enlaces.end();it1++){
+       fu(origen, destino, enlaces,ruta,costo,r,x);
+        }
+       }
+}
+
+void Mapa(){
+    int x=0,pos,posinicio=0,posaux1=0,posaux2;
+    string temp1,temp2,txtau,neu;
+    map<string,short> enlaces;
+    string sacado=leer();
+    pos =sacado.find_first_of('.');
+    while(true){
+        for(int i=posinicio;i < pos;i++){
+            if(posinicio==0){
+                for(unsigned int i=0;i<sacado.length();i++){
+                    if(i>pos){
+                        temp2+=sacado.at(i);
+                    }
+
+                }sacado=temp2;
+                temp2="";
+                pos=0;
+                break;
+            }
+            else if(sacado.at(i)!=' '){
+                temp1+=sacado.at(i);
+            }
+        }
+        if (temp1!=""){
+            posaux1=temp1.find_first_of("-");
+            for(unsigned int i=0;i<temp1.length();i++){
+                if(i>posaux1){
+                    temp2+=temp1.at(i);
+                }else if(temp1.at(i)!='-'){
+                    txtau+=temp1.at(i);
+                }
+            }
+            double num_double = std::stod(temp2);
+            enlaces[txtau]=num_double;
+        }
+
+        posinicio=pos+1;
+
+        for(unsigned int i=0;i<sacado.length();i++){
+            if(i>pos){
+                neu+=sacado.at(i);
+            }
+
+        }
+        posaux2=neu.find_first_of('.');
+        pos +=posaux2+1;
+        neu="";
+        temp2="";
+        temp1="";
+        txtau="";
+        if(posaux2==-1){
+            break;
+        }
+
+    }
+}
+bool Menu(){
     int opcion;
     cout<<"********************************************"<<endl;
     cout<<"*             QUE QUIERE HECER             *"<<endl;
@@ -211,14 +411,22 @@ void Menu(){
         BorrarRouter();
         break;
     case 3:
+        system("CLS");
+        BusquedaRutas(1);
+
+        system("pause");
         break;
     case 4:
+        system("CLS");
+        BusquedaRutas(2);
+
+        system("pause");
         break;
     case 5:
         cout<<"********************************************"<<endl;
         cout<<"*           QUE TENGA BUEN DIA             *"<<endl;
         cout<<"********************************************"<<endl;
-        break;
+        return false;
     default:
         cout<<"********************************************"<<endl;
         cout<<"*             !NO ESCOGIO NADA¡            *"<<endl;
@@ -227,87 +435,3 @@ void Menu(){
     }
 
 }
-
-
-void Actualizar(){
-
-}
-
-void busquedaRutas(const map<string, short>& rts,const string inicio,const char fin,short costotl,routers _r){
-
-    short lTamInicio=inicio.size();
-    for(auto enl : rts){
-        if(inicio[lTamInicio-1]==enl.first[0] && inicio[lTamInicio-2]!= enl.first[1]){
-            cout<<inicio<<"-"<<enl.first<<"["<<enl.second<<"]"<<endl;
-            size_t found = inicio.find(enl.first);
-            if(found != std::string::npos){
-                cout<<"cadena repetida"<<endl;
-                return;
-            }
-            if(enl.first.back()==fin){
-                if(costotl+enl.second< _r.getCostoMinimo()){
-                    _r.setRuta(inicio+enl.first,costotl+enl.second );
-                }
-                return;
-            }
-            busquedaRutas(rts,string(inicio+enl.first),fin,costotl+enl.second,_r);
-        }
-    }
-
-}
-void Mapa(){
-    int x=0,pos,posinicio=0,posaux1=0,posaux2;
-            string temp1,temp2,txtau,neu;
-            map<string,short> enlaces;
-            string sacado=leer();
-            pos =sacado.find_first_of('.');
-            while(true){
-                for(int i=posinicio;i < pos;i++){
-                    if(posinicio==0){
-                        for(unsigned int i=0;i<sacado.length();i++){
-                            if(i>pos){
-                                temp2+=sacado.at(i);
-                            }
-
-                        }sacado=temp2;
-                        temp2="";
-                        pos=0;
-                        break;
-                    }
-                    else if(sacado.at(i)!=' '){
-                        temp1+=sacado.at(i);
-                    }
-                }
-                if (temp1!=""){
-                    posaux1=temp1.find_first_of("-");
-                    for(unsigned int i=0;i<temp1.length();i++){
-                        if(i>posaux1){
-                            temp2+=temp1.at(i);
-                        }else if(temp1.at(i)!='-'){
-                            txtau+=temp1.at(i);
-                        }
-                    }
-                    double num_double = std::stod(temp2);
-                    enlaces[txtau]=num_double;
-                }
-
-            posinicio=pos+1;
-
-            for(unsigned int i=0;i<sacado.length();i++){
-                if(i>pos){
-                    neu+=sacado.at(i);
-                }
-
-            }
-            posaux2=neu.find_first_of('.');
-            pos +=posaux2+1;
-            neu="";
-            temp2="";
-            temp1="";
-            txtau="";
-            if(posaux2==-1){
-                break;
-            }
-
-            }
-           }
