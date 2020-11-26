@@ -11,6 +11,9 @@
 using namespace std;
 routers r;
 char ori;
+vector<string> rut={""};
+vector<int> cost= {90000000};
+int j;
 
 string leer(){
     string data;
@@ -223,28 +226,40 @@ esta el Reuter que dio el usuario se elimina dicho componente del mapa
 //    }
 
 //}
-void fu(char origen,char destino,map<string,short> enlaces,string ruta,short costo,routers r,int x){
-    int pos=ruta.size();
+void fu(char origen,char destino,map<string,short> enlaces,string ruta,short costo,routers r){
     map<string,short>::iterator it1;
+    string rutaa;
     for (it1=enlaces.begin();it1!=enlaces.end();it1++){
             if(it1->first[0]==origen){
-                if(it1->first[1]!=ori){
+                if(ruta.find(it1->first[1])==-1){
                     ruta+=it1->first;
                     costo+=it1->second;
                     if(it1->first[1]==destino){
-                        if(r.getCostoMinimo()>costo){
-                            r.setRuta(ruta,costo);
+                        if(cost[0]>costo){
+                            rut[0]="";
+                            rut[0]=ruta;
+                            cost[0]=costo;
                             ruta="";
                             costo=0;
+
                             origen=ori;
                             return;
                         }
                     }else{
-                        if(ruta[pos-1]==origen){
+                        if(ruta[ruta.size()-1]==origen){
 
+                        }else{origen=it1->first[1];
+                            fu(origen, destino, enlaces,ruta,costo,r);
+                            origen=ruta[ruta.size()-2];
+                            for(unsigned int i=0;i<ruta.size();i++){
+                                if(i<ruta.size()-2){
+                                    rutaa+=ruta.at(i);
+                                }
+
+                            }
+                            costo-=it1->second;
+                            ruta=rutaa;
                         }
-                        origen=it1->first[1];
-                        fu(origen, destino, enlaces,ruta,costo,r,x);
 
 
                     }
@@ -254,10 +269,9 @@ void fu(char origen,char destino,map<string,short> enlaces,string ruta,short cos
 
     }
 }
-void BusquedaRutas(int x){
+void BusquedaRutas(){
     char origen,destino;
     string c,ruta;short costo;
-    routers r;
     cout<<"********************************************"<<endl;
     cout<<"*      INGRESE DE LA DIGUIENTE FORMA       *"<<endl;
     cout<<"********************************************"<<endl;
@@ -325,8 +339,12 @@ void BusquedaRutas(int x){
 
         }
         map<string,short>::iterator it1;
-        for (it1=enlaces.begin();it1!=enlaces.end();it1++){
-       fu(origen, destino, enlaces,ruta,costo,r,x);
+
+       fu(origen, destino, enlaces,ruta,costo,r);
+        if(j==0){
+            cout<<"el costo minimo es: "<<cost[0]<<endl;
+        }else if(j==1){
+            cout<<"la ruta minima es: "<<rut[0]<<endl;
         }
        }
 }
@@ -412,16 +430,16 @@ bool Menu(){
         break;
     case 3:
         system("CLS");
-        BusquedaRutas(1);
-
-        system("pause");
-        break;
+        j=0;
+        BusquedaRutas();
+        _sleep(2000);
+        return true;
     case 4:
         system("CLS");
-        BusquedaRutas(2);
-
-        system("pause");
-        break;
+        j=1;
+        BusquedaRutas();
+        _sleep(2000);
+        return true;
     case 5:
         cout<<"********************************************"<<endl;
         cout<<"*           QUE TENGA BUEN DIA             *"<<endl;
